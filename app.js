@@ -75,12 +75,19 @@ function Human(name,weight,height,diet){
     this.diet = diet
 }
 
-let compareArray = [];
+
+function getRandomFact(dino) {
+    // Create an array of facts
+    // you could add the default dino fact too
+    const arrayItems = [Dino.prototype.compareHeight(), Dino.prototype.compareWeight(),Dino.prototype.compareHeight() ];
+    // Generate a random number
+    const index = Math.floor(Math.random() * arrayItems.length);
+    return arrayItems[index];
+}
 
 // Generate Tiles for each Dino in Array -
 
 let addTiles = [];
-
 
 function dinoTiles(){
     dinoArr.forEach((dino)=>{
@@ -89,14 +96,13 @@ function dinoTiles(){
             <img src="${dino.constructor.name === 'Human' ? 'images/human.png' : dino.img }" alt="tiles">
             <p>${
                  dino.constructor.name === 'Human' ? 'How do you compare?' : 
-                 dino.species == "Pigeon" ? "All birds are living dinosaurs" :
-                 Dino.prototype.compareDiet(dino.diet)
+                 dino.species == "Pigeon" ? "All birds are living dinosaurs" : 
+                 getRandomFact(dino)
             }</p>
         </div>`;
     });
     return addTiles;
 }
-
 
 
 // Create Dino Compare Method 1 - human tile has no fact
@@ -115,17 +121,17 @@ formBtn.addEventListener("click", function(e) {
     //The compare functions are added here
     Dino.prototype.compareHeight = function (dinoHeight) {
         if (human.height > dinoHeight){
-            return "you are taller";
+            return "you are taller than this dino";
         } else{
-            return "you are smaller";
+            return "you are smaller than this dino";
         }
     }
 
     Dino.prototype.compareWeight = function (dinoWeight) {
         if (human.weight > dinoWeight) {
-            return "you are heavier";
+            return "you are heavier than this dino";
         } else {
-            return "you are lighter";
+            return "you are lighter than this dino";
         }
     }
 
@@ -137,14 +143,12 @@ formBtn.addEventListener("click", function(e) {
         }
     }
 
-    // let compareArray = [Dino.prototype.compareHeight(), Dino.prototype.compareWeight(), Dino.prototype.compareDiet()]
-    // console.log(compareArray);
-
     shuffleTiles(dinoArr);
 
     dinoArr.splice(4, 0, human);
 
     grid.innerHTML = dinoTiles();
+    form.style.display = "none";
 });
 
 //reset form
