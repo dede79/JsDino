@@ -1,8 +1,8 @@
 //set variables
 const grid = document.getElementById("grid");
 const formBtn = document.getElementById("btn");
-const form = document.getElementById('dino-compare')
-const resetBtn = document.getElementById('form-reset')
+const form = document.getElementById("dino-compare");
+const resetBtn = document.getElementById("form-reset");
 
 
 /**
@@ -10,30 +10,32 @@ const resetBtn = document.getElementById('form-reset')
  */
 let dinoArr=[];
 
-fetch("./dino.json")
-    .then((response) => {
-        return response.json();
-    })
-    .then((data) => {
-        data.Dinos.forEach((dino) => {
-            dinoArr.push(
-                new Dino(
-                    dino.species,
-                    dino.weight,
-                    dino.height,
-                    dino.diet,
-                    dino.where,
-                    dino.when,
-                    dino.fact,
-                    dino.img
-                )
-            );
-        });
-    })
+let fetchDinos = async () => {
+    const response =   await fetch("dino.json");
+    const data = await response.json();
+    return data;
+}
+
+fetchDinos().then((data) => {
+    const allDinos = data.Dinos;
+    allDinos.map((dino) => {
+        dinoArr.push(
+            new Dino(
+                dino.species,
+                dino.weight,
+                dino.height,
+                dino.diet,
+                dino.where,
+                dino.when,
+                dino.fact,
+                dino.img
+            )
+        );
+    });
+})
     .catch((err) => {
         console.log(err);
     });
-
 // Create Dino Constructor
 /**
  * @description Represents a Dino
@@ -45,7 +47,7 @@ fetch("./dino.json")
  * @param {string} fact
  * @param {string} where
  * @param {string} when
- *  @param {string} img
+ * @param {string} img
  */
 
 function Dino (species,weight,height,diet,where,when,fact,img){
@@ -67,6 +69,10 @@ function shuffleTiles(arr){
 /**
  * @description Represents a Human
  * @constructor
+ * @param {string} name
+ * @param {number} weight
+ * @param {number} height
+ * @param {string} diet
  */
 function Human(name,weight,height,diet){
     this.name = name,
@@ -79,7 +85,7 @@ function Human(name,weight,height,diet){
 function getRandomFact(dino) {
     // Create an array of facts
     // you could add the default dino fact too
-    const arrayItems = [Dino.prototype.compareHeight(), Dino.prototype.compareWeight(),Dino.prototype.compareHeight() ];
+    const arrayItems = [dino.compareHeight(dino.height), dino.compareWeight(dino.weight),dino.compareDiet(dino.diet) ];
     // Generate a random number
     const index = Math.floor(Math.random() * arrayItems.length);
     return arrayItems[index];
@@ -95,7 +101,7 @@ function dinoTiles(){
             <h3>${dino.constructor.name === 'Dino' ? dino.species : dino.name}</h3>
             <img src="${dino.constructor.name === 'Human' ? 'images/human.png' : dino.img }" alt="tiles">
             <p>${
-                 dino.constructor.name === 'Human' ? 'How do you compare?' : 
+                 dino.constructor.name === 'Human' ? '' : 
                  dino.species == "Pigeon" ? "All birds are living dinosaurs" : 
                  getRandomFact(dino)
             }</p>
@@ -105,13 +111,11 @@ function dinoTiles(){
 }
 
 
-// Create Dino Compare Method 1 - human tile has no fact
-//HEIGHT
-
 // On button click, prepare and display infographic
 formBtn.addEventListener("click", function(e) {
     e.preventDefault();
-      let human = new Human(
+
+     let human = new Human(
           document.getElementById("name").value,
           parseInt(document.getElementById("weight").value),
           parseInt((document.getElementById("feet").value * 12)) + parseInt(document.getElementById("inches").value),
@@ -146,17 +150,26 @@ formBtn.addEventListener("click", function(e) {
     shuffleTiles(dinoArr);
 
     dinoArr.splice(4, 0, human);
-
-    grid.innerHTML = dinoTiles();
     form.style.display = "none";
+    grid.innerHTML = dinoTiles();
 });
 
-//reset form
-resetBtn.addEventListener("click", function() {
-    // reinstate and reset form
-    grid.style.display = "none";
-    form.reset();
-    form.style.display = "block";
-});
+//reset form - NOT BEING USED
+//     resetBtn.addEventListener("click", function(e) {
+//         e.preventDefault();
+//
+//         while (grid.firstChild) {
+//             grid.removeChild(grid.firstChild);
+//         }
+//
+//         dinoArr.splice(4,1)
+//
+//         resetBtn.style.display = 'none';
+//
+//         //reinstate and reset form
+//         form.reset();
+//         form.style.display = "block";
+//         grid.innerHTML = " "
+//     });
 
 
